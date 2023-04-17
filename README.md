@@ -1,18 +1,10 @@
-## Getting Started
+## 浙江大学2023秋冬数据库系统lab5图书管理系统
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+.vscode中为项目设置
 
-## Folder Structure
+lib中为外部库
 
-The workspace contains two folders by default, where:
+bin中为.class文件
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+src中为源码
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
