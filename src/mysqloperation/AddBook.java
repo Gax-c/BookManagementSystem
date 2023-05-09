@@ -3,6 +3,7 @@ package mysqloperation;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
@@ -19,19 +20,36 @@ public class AddBook {
             Class.forName("com.mysql.cj.jdbc.Driver");
             //连接数据库
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/library?characterEncoding=GBK", "root", "123456");
-            String sql = "INSERT INTO book VALUES(?,?,?,?,?,?,?,?,?)";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, bid);
-            preparedStatement.setString(2, type);
-            preparedStatement.setString(3, name);
-            preparedStatement.setString(4, press);
-            preparedStatement.setInt(5, Integer.parseInt(year));
-            preparedStatement.setString(6, author);
-            preparedStatement.setDouble(7, Double.parseDouble(price));
-            preparedStatement.setInt(8, Integer.parseInt(total));
-            preparedStatement.setInt(9, Integer.parseInt(stock));
 
-            preparedStatement.executeUpdate();
+            String sql = "SELECT * FROM book WHERE bid=?"; 
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, bid); 
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (!resultSet.next()) {
+                sql = "INSERT INTO book VALUES(?,?,?,?,?,?,?,?,?)";
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, bid);
+                preparedStatement.setString(2, type);
+                preparedStatement.setString(3, name);
+                preparedStatement.setString(4, press);
+                preparedStatement.setInt(5, Integer.parseInt(year));
+                preparedStatement.setString(6, author);
+                preparedStatement.setDouble(7, Double.parseDouble(price));
+                preparedStatement.setInt(8, Integer.parseInt(total));
+                preparedStatement.setInt(9, Integer.parseInt(stock));
+                preparedStatement.executeUpdate();
+            } 
+            else {
+                int preStock = resultSet.getInt("stock"); 
+                int preTotal = resultSet.getInt("total"); 
+                sql = "UPDATE book SET total=?, stock=? WHERE bid=?";
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, preTotal + Integer.parseInt(total));
+                preparedStatement.setInt(2, preStock + Integer.parseInt(stock));
+                preparedStatement.setString(3, bid);
+                preparedStatement.executeUpdate();
+            }
         }catch (Exception e) { 
             JOptionPane.showMessageDialog(null, "错误:" + e.getMessage(), "警告", JOptionPane.WARNING_MESSAGE);
             e.printStackTrace();

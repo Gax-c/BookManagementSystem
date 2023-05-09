@@ -3,6 +3,7 @@ package mysqloperation;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
@@ -28,17 +29,35 @@ public class AddBookBash {
             //去除最后一个')'
             attr[7] = attr[7].substring(0, attr[7].length() - 1); 
 
-            String sql = "INSERT INTO book VALUES(?,?,?,?,?,?,?,?,?)";
+            String sql = "SELECT * FROM book WHERE bid=?"; 
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, attr[0].trim());
-            preparedStatement.setString(2, attr[1].trim());
-            preparedStatement.setString(3, attr[2].trim());
-            preparedStatement.setString(4, attr[3].trim());
-            preparedStatement.setInt(5, Integer.parseInt(attr[4].trim()));
-            preparedStatement.setString(6, attr[5].trim());
-            preparedStatement.setDouble(7, Double.parseDouble(attr[6].trim()));
-            preparedStatement.setInt(8, Integer.parseInt(attr[7].trim()));
-            preparedStatement.setInt(9, Integer.parseInt(attr[7].trim()));
+            preparedStatement.setString(1, attr[0].trim()); 
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+
+            if (!resultSet.next()) {
+                sql = "INSERT INTO book VALUES(?,?,?,?,?,?,?,?,?)";
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, attr[0].trim());
+                preparedStatement.setString(2, attr[1].trim());
+                preparedStatement.setString(3, attr[2].trim());
+                preparedStatement.setString(4, attr[3].trim());
+                preparedStatement.setInt(5, Integer.parseInt(attr[4].trim()));
+                preparedStatement.setString(6, attr[5].trim());
+                preparedStatement.setDouble(7, Double.parseDouble(attr[6].trim()));
+                preparedStatement.setInt(8, Integer.parseInt(attr[7].trim()));
+                preparedStatement.setInt(9, Integer.parseInt(attr[7].trim()));
+            }
+            else {
+                int preStock = resultSet.getInt("stock"); 
+                int preTotal = resultSet.getInt("total"); 
+                sql = "UPDATE book SET total=?, stock=? WHERE bid=?";
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, preTotal + Integer.parseInt(attr[7].trim()));
+                preparedStatement.setInt(2, preStock + Integer.parseInt(attr[7].trim()));
+                preparedStatement.setString(3, attr[0].trim());
+                preparedStatement.executeUpdate();
+            }
 
             preparedStatement.executeUpdate();
         }catch (Exception e) { 
